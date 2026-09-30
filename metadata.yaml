@@ -1,0 +1,7 @@
+name: astrbot_plugin_bili_digest
+display_name: Bilibili 省流助手
+desc: 回复视频卡片或发送链接获取省流，支持字幕、ASR、多模态与本地归档。
+version: v0.1.0
+author: AstrBot User
+repo: https://github.com/Bili-Helper/astrbot_plugin_bili_digest
+astrbot_version: '>=4.16.0'

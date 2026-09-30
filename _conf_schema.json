@@ -1,0 +1,248 @@
+{
+  "keywords": {
+    "description": "触发关键词",
+    "type": "list",
+    "default": [
+      "来个省流"
+    ]
+  },
+  "trigger_mode": {
+    "description": "触发模式",
+    "type": "string",
+    "default": "keyword",
+    "options": [
+      "keyword",
+      "regex",
+      "auto"
+    ]
+  },
+  "require_mention": {
+    "description": "群聊需要 @机器人",
+    "type": "bool",
+    "default": true
+  },
+  "private_without_mention": {
+    "description": "私聊无需 @",
+    "type": "bool",
+    "default": true
+  },
+  "bare_bv": {
+    "description": "识别裸 BV 号并允许 BV 单独触发",
+    "type": "bool",
+    "default": false,
+    "hint": "开启后仍受 require_mention 限制；希望直接发送 BV 即触发时，请同时关闭 require_mention。"
+  },
+  "trigger_regex": {
+    "description": "自定义触发正则（只匹配当前消息）",
+    "type": "string",
+    "default": "",
+    "hint": "仅管理员设置；限制输入长度和匹配时间。支持 regex 模块语法。"
+  },
+  "allowed_domains": {
+    "description": "允许的视频域名（包含子域名）",
+    "type": "list",
+    "default": [
+      "bilibili.com",
+      "b23.tv",
+      "bili2233.cn",
+      "youtube.com",
+      "youtu.be",
+      "douyin.com",
+      "ixigua.com",
+      "acfun.cn"
+    ]
+  },
+  "strategies": {
+    "description": "分析顺序，失败后尝试下一项",
+    "type": "list",
+    "default": [
+      "subtitle",
+      "asr"
+    ],
+    "hint": "可填 subtitle、asr、frames、gemini、bibigpt。按顺序尝试，首个成功即返回；想强制分析画面请把 frames 或 gemini 放在首位。"
+  },
+  "provider_id": {
+    "description": "总结模型 ID（留空跟随会话）",
+    "type": "string",
+    "default": "",
+    "hint": "填写 AstrBot 模型服务 ID，不是模型名称。",
+    "_special": "select_provider"
+  },
+  "vision_provider_id": {
+    "description": "图片理解模型 ID（frames 模式）",
+    "type": "string",
+    "default": "",
+    "_special": "select_provider"
+  },
+  "asr_backend": {
+    "description": "语音识别后端",
+    "type": "string",
+    "default": "astrbot",
+    "options": [
+      "astrbot",
+      "faster-whisper"
+    ]
+  },
+  "downloader": {
+    "description": "媒体下载器",
+    "type": "string",
+    "default": "yt-dlp",
+    "options": [
+      "yt-dlp",
+      "lux"
+    ]
+  },
+  "lux_path": {
+    "description": "Lux 可执行文件路径",
+    "type": "string",
+    "default": "lux"
+  },
+  "cookies_file": {
+    "description": "Cookie 文件绝对路径",
+    "type": "string",
+    "default": "",
+    "hint": "yt-dlp 使用 Netscape cookies.txt；Lux 使用其自身支持的 Cookie 格式。请勿将 Cookie 发到群聊。"
+  },
+  "ffmpeg_path": {
+    "description": "ffmpeg 可执行文件路径",
+    "type": "string",
+    "default": "ffmpeg"
+  },
+  "ffprobe_path": {
+    "description": "ffprobe 可执行文件路径",
+    "type": "string",
+    "default": "ffprobe"
+  },
+  "subtitle_languages": {
+    "description": "字幕语言优先级",
+    "type": "list",
+    "default": [
+      "zh-CN",
+      "zh-Hans",
+      "zh",
+      "ai-zh",
+      "en"
+    ]
+  },
+  "whisper_model": {
+    "description": "Whisper 模型名或本地目录",
+    "type": "string",
+    "default": "small",
+    "hint": "首次使用模型名称可能下载模型权重；使用本地路径可离线转录。"
+  },
+  "whisper_device": {
+    "description": "Whisper 设备",
+    "type": "string",
+    "default": "cpu",
+    "options": [
+      "cpu",
+      "cuda"
+    ]
+  },
+  "whisper_compute_type": {
+    "description": "Whisper 计算精度",
+    "type": "string",
+    "default": "int8",
+    "options": [
+      "int8",
+      "float16",
+      "float32",
+      "int8_float16"
+    ]
+  },
+  "asr_language": {
+    "description": "语音语言（空为自动，例 zh）",
+    "type": "string",
+    "default": ""
+  },
+  "audio_segment_seconds": {
+    "description": "音频分段秒数",
+    "type": "int",
+    "default": 300
+  },
+  "gemini_api_key": {
+    "description": "Gemini API Key",
+    "type": "string",
+    "default": "",
+    "hint": "仅启用 gemini 路径时，会向 Google 上传视频，处理结束尝试删除远端文件。",
+    "secret": true
+  },
+  "gemini_model": {
+    "description": "Gemini 视频模型名称（手动填写）",
+    "type": "string",
+    "default": ""
+  },
+  "bibigpt_api_key": {
+    "description": "BibiGPT API Key",
+    "type": "string",
+    "default": "",
+    "hint": "仅启用 bibigpt 路径时，向 BibiGPT 发送链接，由服务商处理；可能收费。",
+    "secret": true
+  },
+  "max_duration_seconds": {
+    "description": "本地分析最大视频时长（秒）",
+    "type": "int",
+    "default": 3600,
+    "hint": "适用于本地下载分析路径；BibiGPT 由远端服务控制时长。"
+  },
+  "max_download_mb": {
+    "description": "单任务临时文件总量上限（MiB）",
+    "type": "int",
+    "default": 300
+  },
+  "max_concurrent": {
+    "description": "最大并行任务数",
+    "type": "int",
+    "default": 2
+  },
+  "max_pending": {
+    "description": "包含执行中任务的最大排队数",
+    "type": "int",
+    "default": 8
+  },
+  "user_cooldown_seconds": {
+    "description": "每用户请求间隔（秒）",
+    "type": "int",
+    "default": 15
+  },
+  "job_timeout_seconds": {
+    "description": "总超时（含排队，秒）",
+    "type": "int",
+    "default": 1200
+  },
+  "step_timeout_seconds": {
+    "description": "单步骤超时（秒）",
+    "type": "int",
+    "default": 300
+  },
+  "chunk_chars": {
+    "description": "LLM 每段输入字符数",
+    "type": "int",
+    "default": 12000
+  },
+  "max_source_chars": {
+    "description": "允许处理的最大文本字符数",
+    "type": "int",
+    "default": 300000
+  },
+  "frame_count": {
+    "description": "均匀抽帧数量",
+    "type": "int",
+    "default": 8
+  },
+  "cache_hours": {
+    "description": "成功结果缓存小时数（0关闭）",
+    "type": "int",
+    "default": 168
+  },
+  "reply_chars": {
+    "description": "首次回复摘要长度及查看分段长度",
+    "type": "int",
+    "default": 1800
+  },
+  "summary_prompt": {
+    "description": "省流输出要求",
+    "type": "text",
+    "default": "用中文写省流：先给一句话结论，再列3至8条关键内容；有依据时附时间点，最后说明适合谁看。避免空泛套话。"
+  }
+}
