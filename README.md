@@ -169,3 +169,14 @@ python -m ruff format --check astrbot_plugin_bili_digest
 测试覆盖解析、字幕、缓存、会话隔离、崩溃恢复、并发去重、取消、远端接口协议/清理和进程超时。安装 ffmpeg/ffprobe 时会用本地样例验证分段与抽帧。
 
 已用真实 B 站公开视频完成元数据/字幕列表联网检查。AstrBot 入口与远端模型接口采用模拟测试；环境未配置 QQ 会话、LLM/STT、Gemini 或 BibiGPT Key，尚未完成这些服务的真实端到端验收。
+
+## 发布
+
+发布前更新 `metadata.yaml` 中的 `version`，提交后创建同名标签并推送：
+
+~~~bash
+git tag v0.1.0
+git push origin v0.1.0
+~~~
+
+标签必须以 `v` 开头，并与 `metadata.yaml` 中的版本完全一致。GitHub Actions 会运行测试和 Ruff 检查，生成可直接安装的 ZIP、SHA-256 校验文件，并创建带自动发行说明的 GitHub Release。

@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt ruff
+
+      - name: Check tag and plugin version
+        shell: bash
+        run: |
+          plugin_version="$(sed -n 's/^version:[[:space:]]*//p' metadata.yaml | tr -d "\"'")"
+          if [[ "$plugin_version" != "$GITHUB_REF_NAME" ]]; then
+            echo "Tag $GITHUB_REF_NAME does not match metadata.yaml version $plugin_version"
+            exit 1
+          fi
+
+      - name: Run checks
+        env:
+          PYTHONPATH: ${{ github.workspace }}/..
+        run: |
+          python -m unittest discover -s tests -v
+          ruff check .
+          ruff format --check .
+
+      - name: Build release archive
+        shell: bash
+        run: |
+          archive="astrbot_plugin_bili_digest-${GITHUB_REF_NAME}.zip"
+          mkdir -p dist
+          git archive \
+            --format=zip \
+            --prefix=astrbot_plugin_bili_digest/ \
+            --output="dist/$archive" \
+            "$GITHUB_SHA"
+          cd dist
+          sha256sum "$archive" > "$archive.sha256"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/* --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              dist/* \
+              --verify-tag \
+              --generate-notes \
+              --title "$GITHUB_REF_NAME"
+          fi
